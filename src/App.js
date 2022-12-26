@@ -1,30 +1,33 @@
-import { Alert, Button, FormControl, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Alert, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Box } from '@mui/system';
-
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useState } from 'react';
 import './App.scss';
 
 function App() {
 
+  const [currentJobIndex, setCurrentJobIndex] = useState(0);
+  const [currentJob, setCurrentJob] = useState({});
   const [jobs, setJobs] = useState([]);
   const [jobName, setJobName] = useState('');
   const [priority, setPriority] = useState('');
+  const [openJobEditModal, setOpenJobEditModal] = useState(false);
+  const [openJobDeleteModal, setOpenJobDeleteModal] = useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
 
-  const changePriority = (event) => {
-    setPriority(event.target.value);
-  };
 
+  //Functions
   const handleJobName = (event) => {
     setJobName(event.target.value);
   };
-
-  const snackbarClose = () => {
-    setOpenErrorSnackbar(false);
-    setOpenSuccessSnackbar(false);
+  const changePriority = (event) => {
+    setPriority(event.target.value);
   };
-
+  const changeCurrentJobPriority = (event) => {
+    setCurrentJob({ ...currentJob, priority: event.target.value })
+  };
   const createJob = () => {
     if (priority.length === 0) {
       setOpenErrorSnackbar(true);
@@ -33,12 +36,32 @@ function App() {
     } else {
       setOpenSuccessSnackbar(true);
       setJobs([...jobs, { "name": jobName, "priority": priority }]);
+      setJobName('');
+      setPriority('');
     }
+  }
+  const snackbarClose = () => {
+    setOpenErrorSnackbar(false);
+    setOpenSuccessSnackbar(false);
+  };
 
-    setJobName('');
-    setPriority('');
+  const editOnClick = (job, index) => {
+    setCurrentJobIndex(index);
+    setCurrentJob(job);
+    setOpenJobEditModal(true)
   }
 
+  const completeEdit = () => {
+    let tempJobs = [...jobs];
+    console.log(tempJobs);
+    console.log(currentJob);
+    console.log(currentJobIndex);
+    tempJobs[currentJobIndex] = currentJob;
+    setJobs(tempJobs);
+    setOpenJobEditModal(false);
+  }
+
+  //Components
   const createJobSection = () => {
     return <Box className="create-new-job-wrapper">
       <h2>Create New Job</h2>
@@ -68,34 +91,91 @@ function App() {
 
 
 
-
   return (
     <div className="App">
 
       {createJobSection()}
 
       {jobs.length > 0 ?
-       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Priority</TableCell>
-              <TableCell align="right">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {jobs.map((job, index) => (
-              <TableRow key={index}>
-                <TableCell component="th" scope="row">
-                  {job.name}
-                </TableCell>
-                <TableCell align="right">{job.priority}</TableCell>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell align="right">Priority</TableCell>
+                <TableCell align="right">Action</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer> : <h2 className='no-job-text'>No Jobs</h2>}
+            </TableHead>
+            <TableBody>
+              {jobs.map((job, index) => (
+                <TableRow key={index}>
+                  <TableCell component="th" scope="row">
+                    {job.name}
+                  </TableCell>
+                  <TableCell align="right">{job.priority}</TableCell>
+                  <TableCell align="right">
+                    <IconButton onClick={() => editOnClick(job, index)} variant="edit">
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton variant="delete">
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer> : <h2 className='no-job-text'>No Jobs</h2>}
+
+
+      <Modal
+        open={openJobEditModal}
+        onClose={() => setOpenJobEditModal(false)}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+        <Box className='edit-modal-wrapper'>
+          <Box className='edit-modal'>
+            <h2 id="parent-modal-title">Edit Job</h2>
+            
+            <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
+            <Box>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+                <Select
+
+                  labelId="demo-simple-select-label"
+                  label="Priority *"
+                  id="demo-simple-select"
+                  fullWidth
+                  value={currentJob.priority}
+                  onChange={changeCurrentJobPriority}
+                >
+                  <MenuItem value={'Urgent'}>Urgent</MenuItem>
+                  <MenuItem value={'Regular'}>Regular</MenuItem>
+                  <MenuItem value={'Trivial'}>Trivial</MenuItem>
+                </Select>
+              </FormControl>
+              </Box>
+              <Button onClick={completeEdit}>Complete</Button>
+          </Box>
+        </Box>
+      </Modal>
+
+
+      <Modal
+        open={openJobDeleteModal}
+        onClose={() => setOpenJobDeleteModal(false)}
+        aria-labelledby="parent-modal-title"
+        aria-describedby="parent-modal-description"
+      >
+        <Box sx={{ width: 400 }}>
+          <h2 id="parent-modal-title">Text in a modal</h2>
+          <p id="parent-modal-description">
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </p>
+        </Box>
+      </Modal>
 
 
       <Snackbar
