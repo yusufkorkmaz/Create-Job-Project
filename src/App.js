@@ -45,20 +45,26 @@ function App() {
     setOpenSuccessSnackbar(false);
   };
 
-  const editOnClick = (job, index) => {
+  const editButtonOnClickInTable = (job, index) => {
     setCurrentJobIndex(index);
     setCurrentJob(job);
     setOpenJobEditModal(true)
   }
-
-  const completeEdit = () => {
+  const completeButtonOnClickInModal = () => {
     let tempJobs = [...jobs];
-    console.log(tempJobs);
-    console.log(currentJob);
-    console.log(currentJobIndex);
     tempJobs[currentJobIndex] = currentJob;
     setJobs(tempJobs);
     setOpenJobEditModal(false);
+  }
+  const deleteButtonOnClickInTable = (index) => {
+    setCurrentJobIndex(index);
+    setOpenJobDeleteModal(true);
+  }
+  const completeDeleteJobButtonOnClickInModal = () => {
+    let tempJobs = [...jobs];
+    tempJobs.splice(currentJobIndex, 1);
+    setJobs(tempJobs);
+    setOpenJobDeleteModal(false);
   }
 
   //Components
@@ -114,10 +120,10 @@ function App() {
                   </TableCell>
                   <TableCell align="right">{job.priority}</TableCell>
                   <TableCell align="right">
-                    <IconButton onClick={() => editOnClick(job, index)} variant="edit">
+                    <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
                       <EditIcon />
                     </IconButton>
-                    <IconButton variant="delete">
+                    <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
@@ -134,10 +140,10 @@ function App() {
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
-        <Box className='edit-modal-wrapper'>
-          <Box className='edit-modal'>
+        <Box className='modal-wrapper'>
+          <Box className='modal'>
             <h2 id="parent-modal-title">Edit Job</h2>
-            
+
             <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
             <Box>
               <FormControl fullWidth>
@@ -156,8 +162,8 @@ function App() {
                   <MenuItem value={'Trivial'}>Trivial</MenuItem>
                 </Select>
               </FormControl>
-              </Box>
-              <Button onClick={completeEdit}>Complete</Button>
+            </Box>
+            <Button onClick={completeButtonOnClickInModal}>Complete</Button>
           </Box>
         </Box>
       </Modal>
@@ -169,12 +175,15 @@ function App() {
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
       >
-        <Box sx={{ width: 400 }}>
-          <h2 id="parent-modal-title">Text in a modal</h2>
-          <p id="parent-modal-description">
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </p>
+        <Box className='modal-wrapper'>
+          <Box className='modal'>
+
+            <h2 id="parent-modal-title">Delete Job</h2>
+            <p>Are you sure you want to delete this job?</p>
+            <Button onClick={() => completeDeleteJobButtonOnClickInModal()}>Delete</Button>
+          </Box>
         </Box>
+
       </Modal>
 
 
