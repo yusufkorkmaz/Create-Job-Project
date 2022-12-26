@@ -1,4 +1,4 @@
-import { Alert, Button, FormControl, InputLabel, MenuItem, Select, Snackbar, TextField } from '@mui/material';
+import { Alert, Button, FormControl, InputLabel, MenuItem, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 
 import React, { useState } from 'react';
@@ -32,7 +32,7 @@ function App() {
       setOpenErrorSnackbar(true);
     } else {
       setOpenSuccessSnackbar(true);
-      setJobs([...jobs, { jobName, priority }]);
+      setJobs([...jobs, { "name": jobName, "priority": priority }]);
     }
 
     setJobName('');
@@ -67,26 +67,35 @@ function App() {
   }
 
 
+
+
   return (
     <div className="App">
 
       {createJobSection()}
 
-      <Box className="jobs-list-wrapper">
-        <h2>Jobs List</h2>
-        {jobs.map((job, index) => {
-          return (
-            <Box className="job-item" key={index}>
-              <p>{job.jobName}</p>
-              <p>{job.priority}</p>
-            </Box>
-          )
-        }
-        )}
-      </Box>
-
-
-
+      {jobs.length > 0 ?
+       <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell align="right">Priority</TableCell>
+              <TableCell align="right">Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {jobs.map((job, index) => (
+              <TableRow key={index}>
+                <TableCell component="th" scope="row">
+                  {job.name}
+                </TableCell>
+                <TableCell align="right">{job.priority}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer> : <h2 className='no-job-text'>No Jobs</h2>}
 
 
       <Snackbar

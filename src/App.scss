@@ -22,6 +22,14 @@
   width: 150px;
 }
 
+
+.no-job-text {
+  font-weight: 600;
+  text-align: center;
+  color: #000;
+  margin-top: 100px;
+}
+
 @media screen and (max-width: 768px) {
   .create-job-items {
     flex-direction: column;
