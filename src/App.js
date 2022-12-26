@@ -120,7 +120,7 @@ function App() {
             <Table aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
+                  <TableCell>Job</TableCell>
                   <TableCell align="right">Priority</TableCell>
                   <TableCell align="right">Action</TableCell>
                 </TableRow>
@@ -130,10 +130,10 @@ function App() {
                   return a.importanceLevel - b.importanceLevel;
                 }).map((job, index) => (
                   <TableRow key={index}>
-                    <TableCell component="th" scope="row">
+                    <TableCell className='job-text-in-table' component="th" scope="row">
                       {job.name}
                     </TableCell>
-                    <TableCell align="right">{job.priority}</TableCell>
+                    <TableCell align="right"><Box className={`priority-${job.priority}`}>{job.priority}</Box></TableCell>
                     <TableCell align="right">
                       <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
                         <EditIcon />
@@ -157,29 +157,35 @@ function App() {
         aria-describedby="parent-modal-description"
       >
         <Box className='modal-wrapper'>
-          <Box className='modal'>
-            <h2 id="parent-modal-title">Edit Job</h2>
+          <Box className='modal edit-job-modal'>
+            <Box>
+              <h2 id="parent-modal-title">Edit Job</h2>
 
-            <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
-            <Box className='select-priority-in-modal'>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-                <Select
+              <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
+              <Box className='select-priority-in-modal'>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+                  <Select
 
-                  labelId="demo-simple-select-label"
-                  label="Priority *"
-                  id="demo-simple-select"
-                  fullWidth
-                  value={currentJob.priority}
-                  onChange={changeCurrentJobPriority}
-                >
-                  <MenuItem value={'Urgent'}>Urgent</MenuItem>
-                  <MenuItem value={'Regular'}>Regular</MenuItem>
-                  <MenuItem value={'Trivial'}>Trivial</MenuItem>
-                </Select>
-              </FormControl>
+                    labelId="demo-simple-select-label"
+                    label="Priority *"
+                    id="demo-simple-select"
+                    fullWidth
+                    value={currentJob.priority}
+                    onChange={changeCurrentJobPriority}
+                  >
+                    <MenuItem value={'Urgent'}>Urgent</MenuItem>
+                    <MenuItem value={'Regular'}>Regular</MenuItem>
+                    <MenuItem value={'Trivial'}>Trivial</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
-            <Button onClick={completeEditButtonOnClickInModal}>Complete</Button>
+            <Box className='edit-job-modal-buttons'>
+
+              <Button variant="contained" color='info' onClick={completeEditButtonOnClickInModal}>Complete</Button>
+              <Button color='info' onClick={() => setOpenJobEditModal(false)}>Cancel</Button>
+            </Box>
           </Box>
         </Box>
       </Modal>
@@ -190,11 +196,16 @@ function App() {
         aria-describedby="parent-modal-description"
       >
         <Box className='modal-wrapper'>
-          <Box className='modal'>
+          <Box className='modal delete-job-modal'>
+            <Box>
+              <h2 id="parent-modal-title">Delete Job</h2>
+              <p>Are you sure you want to delete this job?</p>
+            </Box>
 
-            <h2 id="parent-modal-title">Delete Job</h2>
-            <p>Are you sure you want to delete this job?</p>
-            <Button onClick={() => completeDeleteJobButtonOnClickInModal()}>Delete</Button>
+            <Box className='delete-job-modal-buttons'>
+              <Button variant="contained" color='error' onClick={() => completeDeleteJobButtonOnClickInModal()}>Delete</Button>
+              <Button color='info' onClick={() => setOpenJobDeleteModal(false)}>Cancel</Button>
+            </Box>
           </Box>
         </Box>
 
