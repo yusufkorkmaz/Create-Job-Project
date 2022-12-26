@@ -6,17 +6,15 @@ import React, { useState } from 'react';
 import './App.scss';
 
 function App() {
-
-  const [currentJobIndex, setCurrentJobIndex] = useState(0);
-  const [currentJob, setCurrentJob] = useState({});
   const [jobs, setJobs] = useState([]);
   const [jobName, setJobName] = useState('');
   const [priority, setPriority] = useState('');
+  const [currentJob, setCurrentJob] = useState({});
+  const [currentJobIndex, setCurrentJobIndex] = useState(0);
   const [openJobEditModal, setOpenJobEditModal] = useState(false);
   const [openJobDeleteModal, setOpenJobDeleteModal] = useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
-
 
   //Functions
   const handleJobName = (event) => {
@@ -44,7 +42,6 @@ function App() {
     setOpenErrorSnackbar(false);
     setOpenSuccessSnackbar(false);
   };
-
   const editButtonOnClickInTable = (job, index) => {
     setCurrentJobIndex(index);
     setCurrentJob(job);
@@ -66,6 +63,7 @@ function App() {
     setJobs(tempJobs);
     setOpenJobDeleteModal(false);
   }
+
 
   //Components
   const createJobSection = () => {
@@ -103,35 +101,38 @@ function App() {
       {createJobSection()}
 
       {jobs.length > 0 ?
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Priority</TableCell>
-                <TableCell align="right">Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {jobs.map((job, index) => (
-                <TableRow key={index}>
-                  <TableCell component="th" scope="row">
-                    {job.name}
-                  </TableCell>
-                  <TableCell align="right">{job.priority}</TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
+        <Box>
+          <h2>Jobs ({jobs.length})</h2>
+          <TableContainer component={Paper}>
+            <Table aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell align="right">Priority</TableCell>
+                  <TableCell align="right">Action</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer> : <h2 className='no-job-text'>No Jobs</h2>}
+              </TableHead>
+              <TableBody>
+                {jobs.map((job, index) => (
+                  <TableRow key={index}>
+                    <TableCell component="th" scope="row">
+                      {job.name}
+                    </TableCell>
+                    <TableCell align="right">{job.priority}</TableCell>
+                    <TableCell align="right">
+                      <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box> : <h2 className='no-job-text'>No Jobs</h2>}
 
 
       <Modal
@@ -145,7 +146,7 @@ function App() {
             <h2 id="parent-modal-title">Edit Job</h2>
 
             <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
-            <Box>
+            <Box className='select-priority-in-modal'>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Priority</InputLabel>
                 <Select
@@ -167,8 +168,6 @@ function App() {
           </Box>
         </Box>
       </Modal>
-
-
       <Modal
         open={openJobDeleteModal}
         onClose={() => setOpenJobDeleteModal(false)}
@@ -186,7 +185,6 @@ function App() {
 
       </Modal>
 
-
       <Snackbar
         open={openErrorSnackbar}
         onClose={snackbarClose}
@@ -196,7 +194,6 @@ function App() {
           Please fill all the fields!
         </Alert>
       </Snackbar>
-
       <Snackbar
         open={openSuccessSnackbar}
         onClose={snackbarClose}
