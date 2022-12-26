@@ -33,9 +33,19 @@ function App() {
       setOpenErrorSnackbar(true);
     } else {
       setOpenSuccessSnackbar(true);
-      setJobs([...jobs, { "name": jobName, "priority": priority }]);
+      setJobs([...jobs, { "name": jobName, "priority": priority, "importanceLevel": selectImportanceLevel(priority) }]);
       setJobName('');
       setPriority('');
+    }
+  }
+  const selectImportanceLevel = (priority) => {
+    switch (priority) {
+      case 'Urgent':
+        return 1;
+      case 'Regular':
+        return 2;
+      case 'Trivial':
+        return 3;
     }
   }
   const snackbarClose = () => {
@@ -47,10 +57,13 @@ function App() {
     setCurrentJob(job);
     setOpenJobEditModal(true)
   }
-  const completeButtonOnClickInModal = () => {
+  const completeEditButtonOnClickInModal = () => {
     let tempJobs = [...jobs];
+    //change priority for sorting
+    currentJob.importanceLevel = selectImportanceLevel(currentJob.priority);
     tempJobs[currentJobIndex] = currentJob;
     setJobs(tempJobs);
+    console.log(jobs);
     setOpenJobEditModal(false);
   }
   const deleteButtonOnClickInTable = (index) => {
@@ -113,7 +126,9 @@ function App() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {jobs.map((job, index) => (
+                {jobs.sort((a, b) => {
+                  return a.importanceLevel - b.importanceLevel;
+                }).map((job, index) => (
                   <TableRow key={index}>
                     <TableCell component="th" scope="row">
                       {job.name}
@@ -164,7 +179,7 @@ function App() {
                 </Select>
               </FormControl>
             </Box>
-            <Button onClick={completeButtonOnClickInModal}>Complete</Button>
+            <Button onClick={completeEditButtonOnClickInModal}>Complete</Button>
           </Box>
         </Box>
       </Modal>
