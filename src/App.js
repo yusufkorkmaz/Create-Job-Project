@@ -8,10 +8,11 @@ import './App.scss';
 
 function App() {
   const [searchInputText, setSearchInputText] = useState('');
-  const [tempJobArrayWhenSearch, setTempJobArrayWhenSearch] = useState([]);
-  const [jobs, setJobs] = useState(JSON.parse(localStorage.getItem('jobs')));
+  const [whichArrayUse, setWhichArrayUse] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [jobName, setJobName] = useState('');
   const [priority, setPriority] = useState('');
+  const [searchPriority, setSearchPriority] = useState('All');
   const [currentJob, setCurrentJob] = useState({});
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
   const [openJobEditModal, setOpenJobEditModal] = useState(false);
@@ -25,6 +26,9 @@ function App() {
   };
   const changePriority = (event) => {
     setPriority(event.target.value);
+  };
+  const changeSearchPriority = (event) => {
+    setSearchPriority(event.target.value);
   };
   const changeCurrentJobPriority = (event) => {
     setCurrentJob({ ...currentJob, priority: event.target.value })
@@ -79,6 +83,9 @@ function App() {
     setJobs(tempJobs);
     setOpenJobDeleteModal(false);
   }
+  const searchOnTable = (event) => {
+    setSearchInputText(event.target.value);
+  }
 
 
   //Components
@@ -109,35 +116,8 @@ function App() {
     </Box>
   }
 
-  
-  useEffect(() => {
-    //sort jobs input
-    let tempJobs = [...jobs];
-    tempJobs.sort((a, b) => a.importanceLevel - b.importanceLevel);
-    setJobs(tempJobs);
-
-    //save jobs to local storage
-    localStorage.setItem('jobs', JSON.stringify(jobs));
-
-  }, [jobs]);
-
-  const searchOnTable = (event) => {
-    setSearchInputText(event.target.value);
-    console.log(searchInputText);
-    let tempJobs = jobs.slice();
-    if(tempJobArrayWhenSearch.length == 0) {
-      setTempJobArrayWhenSearch(tempJobs);
-    }
-    let filteredJobs = tempJobs.filter(job => job.name.includes(event.target.value));
-    setJobs(filteredJobs);
-    if (event.target.value.length == 0) {
-      setJobs(tempJobArrayWhenSearch);
-      setTempJobArrayWhenSearch([]);
-    }
-  }
-
-  const searchInput = () => {
-    return <Box className="search-input-wrapper">
+  const searchArea = () => {
+    return <Box className='search-area'>
       <TextField
         InputProps={{
           startAdornment: (
@@ -147,52 +127,80 @@ function App() {
           )
         }}
         onChange={searchOnTable} id="search-input" className='search-input' label="Search" variant="outlined" />
+      <FormControl className='select-priority-in-search'  >
+        <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          label="Priority *"
+          id="demo-simple-select"
+          defaultValue='All'
+          value={searchPriority}
+          onChange={changeSearchPriority}
+        >
+          <MenuItem value={'All'}>All</MenuItem>
+          <MenuItem value={'Urgent'}>Urgent</MenuItem>
+          <MenuItem value={'Regular'}>Regular</MenuItem>
+          <MenuItem value={'Trivial'}>Trivial</MenuItem>
+        </Select>
+      </FormControl>
     </Box>
   }
+
+  useEffect(() => {
+    if (searchInputText.length > 0 && searchPriority !== 'All') {
+      const filteredJobs = jobs.filter(job => job.name.toLowerCase().includes(searchInputText.toLowerCase()) && job.priority.toLowerCase().includes(searchPriority.toLowerCase()));
+      setWhichArrayUse(filteredJobs);
+    } else if (searchInputText.length > 0 && searchPriority === 'All') {
+      const filteredJobs = jobs.filter(job => job.name.toLowerCase().includes(searchInputText.toLowerCase()));
+      setWhichArrayUse(filteredJobs);
+    } else if (searchPriority !== 'All') {
+      const filteredJobs = jobs.filter(job => job.priority === searchPriority);
+      setWhichArrayUse(filteredJobs);
+    } else {
+      setWhichArrayUse(jobs);
+    }
+  }, [searchInputText, searchPriority, jobs])
 
   return (
     <div className="App">
 
       {createJobSection()}
 
-
       <Box>
-        <Box className="jobs-header-search-input-wrapper">
-          <h2>Jobs ({jobs.length})</h2>
-          {searchInput()}
-        </Box>
-        {jobs.length > 0 &&
-          <TableContainer component={Paper}>
-            <Table aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Job</TableCell>
-                  <TableCell className='priority-text' align="right">Priority</TableCell>
-                  <TableCell className='action-text' align="right">Action</TableCell>
+        <h2>Jobs ({jobs.length})</h2>
+        {searchArea()}
+        
+        <TableContainer component={Paper}>
+          <Table aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Job</TableCell>
+                <TableCell className='priority-text' align="right">Priority</TableCell>
+                <TableCell className='action-text' align="right">Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {whichArrayUse.sort((a, b) => {
+                return a.importanceLevel - b.importanceLevel;
+              }).map((job, index) => (
+                <TableRow key={index}>
+                  <TableCell className='job-text-in-table' component="th" scope="row">
+                    {job.name}
+                  </TableCell>
+                  <TableCell align="right"><Box className={`priority-${job.priority}`}>{job.priority}</Box></TableCell>
+                  <TableCell align="right">
+                    <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {jobs.sort((a, b) => {
-                  return a.importanceLevel - b.importanceLevel;
-                }).map((job, index) => (
-                  <TableRow key={index}>
-                    <TableCell className='job-text-in-table' component="th" scope="row">
-                      {job.name}
-                    </TableCell>
-                    <TableCell align="right"><Box className={`priority-${job.priority}`}>{job.priority}</Box></TableCell>
-                    <TableCell align="right">
-                      <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>}
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
 
 
