@@ -9,7 +9,7 @@ import './App.scss';
 function App() {
   const [searchInputText, setSearchInputText] = useState('');
   const [whichArrayUse, setWhichArrayUse] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const [jobs, setJobs] = useState(JSON.parse(localStorage.getItem('jobs')) || []);
   const [jobName, setJobName] = useState('');
   const [priority, setPriority] = useState('');
   const [searchPriority, setSearchPriority] = useState('All');
@@ -270,6 +270,8 @@ function App() {
     } else {
       setWhichArrayUse(jobs);
     }
+
+    localStorage.setItem('jobs', JSON.stringify(jobs));
   }, [searchInputText, searchPriority, jobs])
 
   return (
