@@ -1,4 +1,4 @@
-import { Alert, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Alert, Button, Divider, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -115,21 +115,32 @@ function App() {
       </Box>
     </Box>
   }
-
   const searchArea = () => {
     return <Box className='search-area'>
-      <TextField
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          )
-        }}
-        onChange={searchOnTable} id="search-input" className='search-input' label="Search" variant="outlined" />
+      <Box className='job-content-headers'>
+        <h2 className='jobs-header'>{jobs.length} Jobs</h2>
+        <h2 className='jobs-header'>{whichArrayUse.length} Match</h2>
+      </Box>
+
+      <Box className='search-input-wrapper' >
+        <TextField
+          disabled={jobs.length === 0}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            )
+          }}
+          onChange={searchOnTable} id="search-input" className='search-input' label="Search" variant="outlined" />
+
+      </Box>
+
       <FormControl className='select-priority-in-search'  >
         <InputLabel id="demo-simple-select-label">Priority</InputLabel>
         <Select
+          disabled={jobs.length === 0}
+
           labelId="demo-simple-select-label"
           label="Priority *"
           id="demo-simple-select"
@@ -143,7 +154,107 @@ function App() {
           <MenuItem value={'Trivial'}>Trivial</MenuItem>
         </Select>
       </FormControl>
+
     </Box>
+  }
+  const jobsArea = () => {
+    return <Box>
+      {searchArea()}
+      <TableContainer component={Paper}>
+        <Table aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Job</TableCell>
+              <TableCell className='priority-text' align="right">Priority</TableCell>
+              <TableCell className='action-text' align="right">Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {whichArrayUse.sort((a, b) => {
+              return a.importanceLevel - b.importanceLevel;
+            }).map((job, index) => (
+              <TableRow key={index}>
+                <TableCell className='job-text-in-table' component="th" scope="row">
+                  {job.name}
+                </TableCell>
+                <TableCell align="right"><Box className={`priority-${job.priority}`}>{job.priority}</Box></TableCell>
+                <TableCell align="right">
+                  <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  }
+  const editModal = () => {
+    return <Modal
+      open={openJobEditModal}
+      onClose={() => setOpenJobEditModal(false)}
+      aria-labelledby="parent-modal-title"
+      aria-describedby="parent-modal-description"
+    >
+      <Box className='modal-wrapper'>
+        <Box className='modal edit-job-modal'>
+          <Box>
+            <h2 id="parent-modal-title">Edit Job</h2>
+
+            <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
+            <Box className='select-priority-in-modal'>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+                <Select
+
+                  labelId="demo-simple-select-label"
+                  label="Priority *"
+                  id="demo-simple-select"
+                  fullWidth
+                  value={currentJob.priority}
+                  onChange={changeCurrentJobPriority}
+                >
+                  <MenuItem value={'Urgent'}>Urgent</MenuItem>
+                  <MenuItem value={'Regular'}>Regular</MenuItem>
+                  <MenuItem value={'Trivial'}>Trivial</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </Box>
+          <Box className='edit-job-modal-buttons'>
+
+            <Button variant="contained" color='info' onClick={completeEditButtonOnClickInModal}>Complete</Button>
+            <Button color='info' onClick={() => setOpenJobEditModal(false)}>Cancel</Button>
+          </Box>
+        </Box>
+      </Box>
+    </Modal>
+  }
+  const deleteJobModal = () => {
+    return <Modal
+      open={openJobDeleteModal}
+      onClose={() => setOpenJobDeleteModal(false)}
+      aria-labelledby="parent-modal-title"
+      aria-describedby="parent-modal-description"
+    >
+      <Box className='modal-wrapper'>
+        <Box className='modal delete-job-modal'>
+          <Box>
+            <h2 id="parent-modal-title">Delete Job</h2>
+            <p>Are you sure you want to delete this job?</p>
+          </Box>
+
+          <Box className='delete-job-modal-buttons'>
+            <Button variant="contained" color='error' onClick={() => completeDeleteJobButtonOnClickInModal()}>Delete</Button>
+            <Button color='info' onClick={() => setOpenJobDeleteModal(false)}>Cancel</Button>
+          </Box>
+        </Box>
+      </Box>
+    </Modal>
   }
 
   useEffect(() => {
@@ -166,106 +277,13 @@ function App() {
 
       {createJobSection()}
 
-      <Box>
-        <h2>Jobs ({jobs.length})</h2>
-        {searchArea()}
-        
-        <TableContainer component={Paper}>
-          <Table aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Job</TableCell>
-                <TableCell className='priority-text' align="right">Priority</TableCell>
-                <TableCell className='action-text' align="right">Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {whichArrayUse.sort((a, b) => {
-                return a.importanceLevel - b.importanceLevel;
-              }).map((job, index) => (
-                <TableRow key={index}>
-                  <TableCell className='job-text-in-table' component="th" scope="row">
-                    {job.name}
-                  </TableCell>
-                  <TableCell align="right"><Box className={`priority-${job.priority}`}>{job.priority}</Box></TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={() => editButtonOnClickInTable(job, index)} variant="edit">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton onClick={() => deleteButtonOnClickInTable(index)} variant="delete">
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
+      {<Divider />}
 
+      {jobsArea()}
 
+      {editModal()}
 
-
-      <Modal
-        open={openJobEditModal}
-        onClose={() => setOpenJobEditModal(false)}
-        aria-labelledby="parent-modal-title"
-        aria-describedby="parent-modal-description"
-      >
-        <Box className='modal-wrapper'>
-          <Box className='modal edit-job-modal'>
-            <Box>
-              <h2 id="parent-modal-title">Edit Job</h2>
-
-              <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={currentJob.name} onChange={handleJobName} variant="outlined" />
-              <Box className='select-priority-in-modal'>
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-                  <Select
-
-                    labelId="demo-simple-select-label"
-                    label="Priority *"
-                    id="demo-simple-select"
-                    fullWidth
-                    value={currentJob.priority}
-                    onChange={changeCurrentJobPriority}
-                  >
-                    <MenuItem value={'Urgent'}>Urgent</MenuItem>
-                    <MenuItem value={'Regular'}>Regular</MenuItem>
-                    <MenuItem value={'Trivial'}>Trivial</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-            </Box>
-            <Box className='edit-job-modal-buttons'>
-
-              <Button variant="contained" color='info' onClick={completeEditButtonOnClickInModal}>Complete</Button>
-              <Button color='info' onClick={() => setOpenJobEditModal(false)}>Cancel</Button>
-            </Box>
-          </Box>
-        </Box>
-      </Modal>
-      <Modal
-        open={openJobDeleteModal}
-        onClose={() => setOpenJobDeleteModal(false)}
-        aria-labelledby="parent-modal-title"
-        aria-describedby="parent-modal-description"
-      >
-        <Box className='modal-wrapper'>
-          <Box className='modal delete-job-modal'>
-            <Box>
-              <h2 id="parent-modal-title">Delete Job</h2>
-              <p>Are you sure you want to delete this job?</p>
-            </Box>
-
-            <Box className='delete-job-modal-buttons'>
-              <Button variant="contained" color='error' onClick={() => completeDeleteJobButtonOnClickInModal()}>Delete</Button>
-              <Button color='info' onClick={() => setOpenJobDeleteModal(false)}>Cancel</Button>
-            </Box>
-          </Box>
-        </Box>
-
-      </Modal>
+      {deleteJobModal()}
 
       <Snackbar
         open={openErrorSnackbar}

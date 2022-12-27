@@ -42,21 +42,32 @@ $color in $priority-colors {
 .search-area {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
-  margin: 20px 0;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+}
+
+.jobs-header {
+  min-width: 100px;
+}
+
+
+.search-input-wrapper {
+  width: 100%;
+  padding: 0 40px;
 }
 
 .search-input {
   display: flex;
   flex-direction: row;
+  width: 100%;
+
   justify-content: space-between;
-  margin-right: 10px;
 }
 
 .select-priority-in-search {
-  width: 100px;
+  width: 120px;
 }
- 
 
 .no-job-text {
   font-weight: 600;
@@ -145,6 +156,21 @@ $color in $priority-colors {
 
   .delete-job-modal {
     justify-content: space-around;
+  }
+
+
+  .job-content-headers {
+    display: flex;
+  }
+
+  .search-input-wrapper {
+    margin: 24px 0;
+    padding: 0;
+  }
+
+  .search-area {
+    flex-direction: column-reverse;
+    align-items: center;
   }
 }
 
