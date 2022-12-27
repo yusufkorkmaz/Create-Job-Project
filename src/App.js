@@ -136,25 +136,25 @@ function App() {
 
       </Box>
 
-      <FormControl className='select-priority-in-search'  >
-        <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-        <Select
-          disabled={jobs.length === 0}
-
-          labelId="demo-simple-select-label"
-          label="Priority *"
-          id="demo-simple-select"
-          defaultValue='All'
-          value={searchPriority}
-          onChange={changeSearchPriority}
-        >
-          <MenuItem value={'All'}>All</MenuItem>
-          <MenuItem value={'Urgent'}>Urgent</MenuItem>
-          <MenuItem value={'Regular'}>Regular</MenuItem>
-          <MenuItem value={'Trivial'}>Trivial</MenuItem>
-        </Select>
-      </FormControl>
-
+      <Box>
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Priority</InputLabel>
+          <Select
+            disabled={jobs.length === 0}
+            labelId="demo-simple-select-label"
+            label="Priority *"
+            id="demo-simple-select"
+            defaultValue='All'
+            value={searchPriority}
+            onChange={changeSearchPriority}
+          >
+            <MenuItem value={'All'}>All</MenuItem>
+            <MenuItem value={'Urgent'}>Urgent</MenuItem>
+            <MenuItem value={'Regular'}>Regular</MenuItem>
+            <MenuItem value={'Trivial'}>Trivial</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
     </Box>
   }
   const jobsArea = () => {
