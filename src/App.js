@@ -1,12 +1,15 @@
-import { Alert, Button, FormControl, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Alert, Button, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import React, { useState } from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+import React, { useEffect, useState } from 'react';
 import './App.scss';
 
 function App() {
-  const [jobs, setJobs] = useState([]);
+  const [searchInputText, setSearchInputText] = useState('');
+  const [tempJobArrayWhenSearch, setTempJobArrayWhenSearch] = useState([]);
+  const [jobs, setJobs] = useState(JSON.parse(localStorage.getItem('jobs')));
   const [jobName, setJobName] = useState('');
   const [priority, setPriority] = useState('');
   const [currentJob, setCurrentJob] = useState({});
@@ -106,23 +109,66 @@ function App() {
     </Box>
   }
 
+  
+  useEffect(() => {
+    //sort jobs input
+    let tempJobs = [...jobs];
+    tempJobs.sort((a, b) => a.importanceLevel - b.importanceLevel);
+    setJobs(tempJobs);
 
+    //save jobs to local storage
+    localStorage.setItem('jobs', JSON.stringify(jobs));
+
+  }, [jobs]);
+
+  const searchOnTable = (event) => {
+    setSearchInputText(event.target.value);
+    console.log(searchInputText);
+    let tempJobs = jobs.slice();
+    if(tempJobArrayWhenSearch.length == 0) {
+      setTempJobArrayWhenSearch(tempJobs);
+    }
+    let filteredJobs = tempJobs.filter(job => job.name.includes(event.target.value));
+    setJobs(filteredJobs);
+    if (event.target.value.length == 0) {
+      setJobs(tempJobArrayWhenSearch);
+      setTempJobArrayWhenSearch([]);
+    }
+  }
+
+  const searchInput = () => {
+    return <Box className="search-input-wrapper">
+      <TextField
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          )
+        }}
+        onChange={searchOnTable} id="search-input" className='search-input' label="Search" variant="outlined" />
+    </Box>
+  }
 
   return (
     <div className="App">
 
       {createJobSection()}
 
-      {jobs.length > 0 ?
-        <Box>
+
+      <Box>
+        <Box className="jobs-header-search-input-wrapper">
           <h2>Jobs ({jobs.length})</h2>
+          {searchInput()}
+        </Box>
+        {jobs.length > 0 &&
           <TableContainer component={Paper}>
             <Table aria-label="customized table">
               <TableHead>
                 <TableRow>
                   <TableCell>Job</TableCell>
-                  <TableCell align="right">Priority</TableCell>
-                  <TableCell align="right">Action</TableCell>
+                  <TableCell className='priority-text' align="right">Priority</TableCell>
+                  <TableCell className='action-text' align="right">Action</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -146,8 +192,10 @@ function App() {
                 ))}
               </TableBody>
             </Table>
-          </TableContainer>
-        </Box> : <h2 className='no-job-text'>No Jobs</h2>}
+          </TableContainer>}
+      </Box>
+
+
 
 
       <Modal
