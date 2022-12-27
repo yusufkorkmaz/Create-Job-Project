@@ -44,7 +44,10 @@ $color in $priority-colors {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-top: 40px;
+}
+
+.divider { 
+  margin: 40px 0!important;
 }
 
 .jobs-header {
@@ -82,6 +85,10 @@ $color in $priority-colors {
   flex-direction: row;
   justify-content: space-between;
   margin-top: 40px;
+}
+
+.job-content-headers {
+  height: 110px;
 }
 
 .priority-text {
@@ -165,15 +172,15 @@ $color in $priority-colors {
 
   .delete-job-modal {
     justify-content: space-around;
-  }
-
+  } 
 
   .job-content-headers {
     display: flex;
+    height: 50px;
   }
 
   .search-input-wrapper {
-    margin: 24px 0;
+    margin: 12px 0;
     padding: 0;
   }
 

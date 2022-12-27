@@ -20,6 +20,8 @@ function App() {
   const [openJobDeleteModal, setOpenJobDeleteModal] = useState(false);
   const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [showMatchCountText, setShowMatchCountText] = useState(false);
+  const [errorSnackbarMessage, setErrorSnackbarMessage] = useState('');
 
   //Functions
   const getPrioritiesInApi = async () => {
@@ -32,6 +34,7 @@ function App() {
       }).catch(error => {
         console.log(error);
         openErrorSnackbar(true);
+        setErrorSnackbarMessage('Error in getting priorities from API');
       })
   }
   const handleJobName = (event) => {
@@ -48,8 +51,10 @@ function App() {
   };
   const createJob = () => {
     if (priority.length === 0) {
+      setErrorSnackbarMessage('Please select a priority');
       setOpenErrorSnackbar(true);
     } else if (jobName.length === 0) {
+      setErrorSnackbarMessage('Please enter a job name');
       setOpenErrorSnackbar(true);
     } else {
       setOpenSuccessSnackbar(true);
@@ -137,7 +142,7 @@ function App() {
     return <Box className='search-area'>
       <Box className='job-content-headers'>
         <h2 className='jobs-header'>{jobs.length} Jobs</h2>
-        <h2 className='jobs-header'>{whichArrayUse.length} Match</h2>
+        {showMatchCountText && <h2 className='jobs-header'>{whichArrayUse.length} Match</h2>}
       </Box>
 
       <Box className='search-input-wrapper' >
@@ -274,21 +279,25 @@ function App() {
   }
 
   useEffect(() => {
-    if (priorities === null || priorities.length === 0) getPrioritiesInApi();
+    if (priorities === null || priorities.length === 0 || Object.keys(priorities).length === 0 || JSON.stringify(priorities) === "{}") getPrioritiesInApi();
   }, [])
 
   useEffect(() => {
     if (searchInputText.length > 0 && searchPriority !== 'All') {
       const filteredJobs = jobs.filter(job => job.name.toLowerCase().includes(searchInputText.toLowerCase()) && job.priority.toLowerCase().includes(searchPriority.toLowerCase()));
       setWhichArrayUse(filteredJobs);
+      setShowMatchCountText(true);
     } else if (searchInputText.length > 0 && searchPriority === 'All') {
       const filteredJobs = jobs.filter(job => job.name.toLowerCase().includes(searchInputText.toLowerCase()));
       setWhichArrayUse(filteredJobs);
+      setShowMatchCountText(true);
     } else if (searchPriority !== 'All') {
       const filteredJobs = jobs.filter(job => job.priority === searchPriority);
       setWhichArrayUse(filteredJobs);
+      setShowMatchCountText(true);
     } else {
       setWhichArrayUse(jobs);
+      setShowMatchCountText(false);
     }
 
     localStorage.setItem('jobs', JSON.stringify(jobs));
@@ -296,12 +305,25 @@ function App() {
 
 
 
+  const CustomSnackBar = (type, showSnackBar, text) => {
+    return <Snackbar
+    open={showSnackBar}
+    onClose={snackbarClose}
+    message={text}
+    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+  >
+    <Alert onClose={snackbarClose} severity={type} sx={{ width: '100%' }}>
+      {text}
+    </Alert>
+  </Snackbar>
+  }
+ 
   return (
     <div className="App">
 
       {createJobSection()}
 
-      {<Divider />}
+      {<Divider className="divider"/>}
 
       {jobsArea()}
 
@@ -309,24 +331,10 @@ function App() {
 
       {deleteJobModal()}
 
-      <Snackbar
-        open={openErrorSnackbar}
-        onClose={snackbarClose}
-        message="Error!"
-      >
-        <Alert onClose={snackbarClose} severity="error" sx={{ width: '100%' }}>
-          Please fill all the fields!
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        open={openSuccessSnackbar}
-        onClose={snackbarClose}
-        message="Success!"
-      >
-        <Alert onClose={snackbarClose} severity="success" sx={{ width: '100%' }}>
-          Success
-        </Alert>
-      </Snackbar>
+      {CustomSnackBar('success', openSuccessSnackbar, 'Success!')}
+
+      {CustomSnackBar('error', openErrorSnackbar, errorSnackbarMessage)}
+
     </div>
   );
 }
