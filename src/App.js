@@ -1,4 +1,4 @@
-import { Alert, Button, Divider, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
+import { Alert, Button, CircularProgress, Divider, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Modal, Paper, Select, Snackbar, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +12,7 @@ function App() {
   const [jobs, setJobs] = useState(JSON.parse(localStorage.getItem('jobs')) || []);
   const [jobName, setJobName] = useState('');
   const [priority, setPriority] = useState('');
+  const [priorities, setPriorities] = useState(JSON.parse(localStorage.getItem('priorities')) || []);
   const [searchPriority, setSearchPriority] = useState('All');
   const [currentJob, setCurrentJob] = useState({});
   const [currentJobIndex, setCurrentJobIndex] = useState(0);
@@ -21,6 +22,18 @@ function App() {
   const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
 
   //Functions
+  const getPrioritiesInApi = async () => {
+    await fetch('http://localhost:3001/api/priorities')
+      .then(response => response.json())
+      .then(data => {
+        setPriorities(data);
+        localStorage.setItem('priorities', JSON.stringify(data));
+        console.log(data);
+      }).catch(error => {
+        console.log(error);
+        openErrorSnackbar(true);
+      })
+  }
   const handleJobName = (event) => {
     setJobName(event.target.value);
   };
@@ -70,7 +83,6 @@ function App() {
     currentJob.importanceLevel = selectImportanceLevel(currentJob.priority);
     tempJobs[currentJobIndex] = currentJob;
     setJobs(tempJobs);
-    console.log(jobs);
     setOpenJobEditModal(false);
   }
   const deleteButtonOnClickInTable = (index) => {
@@ -88,6 +100,14 @@ function App() {
   }
 
 
+  const getPriorities = () => {
+    return priorities.length > 0 ?
+      priorities.map((priority, index) => {
+        return <MenuItem key={index} value={priority.name}>{priority.name}</MenuItem>
+      }) : <Box className="circular-progress"><CircularProgress />
+      </Box>
+
+  }
   //Components
   const createJobSection = () => {
     return <Box className="create-new-job-wrapper">
@@ -105,9 +125,7 @@ function App() {
               value={priority}
               onChange={changePriority}
             >
-              <MenuItem value={'Urgent'}>Urgent</MenuItem>
-              <MenuItem value={'Regular'}>Regular</MenuItem>
-              <MenuItem value={'Trivial'}>Trivial</MenuItem>
+              {getPriorities()}
             </Select>
           </FormControl>
         </Box>
@@ -149,9 +167,7 @@ function App() {
             onChange={changeSearchPriority}
           >
             <MenuItem value={'All'}>All</MenuItem>
-            <MenuItem value={'Urgent'}>Urgent</MenuItem>
-            <MenuItem value={'Regular'}>Regular</MenuItem>
-            <MenuItem value={'Trivial'}>Trivial</MenuItem>
+            {getPriorities()}
           </Select>
         </FormControl>
       </Box>
@@ -258,6 +274,10 @@ function App() {
   }
 
   useEffect(() => {
+    if (priorities === null || priorities.length === 0) getPrioritiesInApi();
+  }, [])
+
+  useEffect(() => {
     if (searchInputText.length > 0 && searchPriority !== 'All') {
       const filteredJobs = jobs.filter(job => job.name.toLowerCase().includes(searchInputText.toLowerCase()) && job.priority.toLowerCase().includes(searchPriority.toLowerCase()));
       setWhichArrayUse(filteredJobs);
@@ -273,6 +293,8 @@ function App() {
 
     localStorage.setItem('jobs', JSON.stringify(jobs));
   }, [searchInputText, searchPriority, jobs])
+
+
 
   return (
     <div className="App">
