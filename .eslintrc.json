@@ -15,13 +15,15 @@
     "plugins": [
         "react"
     ],
-    "rules": {},
+    "rules": {
+        "react/prop-types": "off"
+    },
     "settings": {
         "react": {
-            "createClass": "createReactClass", 
-            "pragma": "React",  
-            "fragment": "Fragment", 
-            "version": "detect", 
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "fragment": "Fragment",
+            "version": "detect",
             "flowVersion": "0.53"
         },
         "propWrapperFunctions": [
@@ -50,7 +52,7 @@
             {
                 "property": "observer",
                 "object": "<pragma>"
-            } 
+            }
         ],
         "formComponents": [
             "CustomForm",
