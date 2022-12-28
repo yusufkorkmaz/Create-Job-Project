@@ -2,13 +2,31 @@ import React, { createContext, useState, useContext } from 'react';
 
 const JobsContext = createContext();
 
-export const JobsProvider = ({children}) => {
+export const JobsProvider = ({ children }) => {
     const [jobs, setJobs] = useState(JSON.parse(localStorage.getItem('jobs')) || []);
-    const [selectedJob, setSelectedJobState] = useState({});
+    const [filteredJobs, setFilteredJobs] = useState([]);
+    const [selectedJob, setSelectedJob] = useState({});
     const [selectedJobIndex, setSelectedJobIndex] = useState(0);
+    const [whichArrayUse, setWhichArrayUse] = useState(jobs);
 
     const getJobs = () => {
         return jobs;
+    };
+
+    const getFilteredJobs = () => {
+        return filteredJobs;
+    };
+
+    const setFilteredJobsState = (jobs) => {
+        setFilteredJobs(jobs);
+    };
+
+    const getWhichArrayUse = () => {
+        return whichArrayUse;
+    };
+
+    const setWhichArrayUseState = (array) => {
+        setWhichArrayUse(array);
     };
 
     const getSelectedJob = () => {
@@ -23,8 +41,8 @@ export const JobsProvider = ({children}) => {
         setSelectedJobIndex(index);
     };
 
-    const setSelectedJob = (id) => {
-        setSelectedJobState(jobs.find((job) => job.id === id));
+    const setSelectedJobState = (job) => {
+        setSelectedJob(job);
     };
 
     const addJob = (job) => {
@@ -40,7 +58,7 @@ export const JobsProvider = ({children}) => {
     };
 
     return (
-        <JobsContext.Provider value={{ getJobs, getSelectedJob, addJob, removeJob, setNewJobs, setSelectedJob, getSelectedJobIndex, setSelectedJobIndexState }}>
+        <JobsContext.Provider value={{ getJobs, getFilteredJobs, getWhichArrayUse, setWhichArrayUseState, setFilteredJobsState, getSelectedJob, addJob, removeJob, setNewJobs, setSelectedJobState, getSelectedJobIndex, setSelectedJobIndexState }}>
             {children}
         </JobsContext.Provider>
     );

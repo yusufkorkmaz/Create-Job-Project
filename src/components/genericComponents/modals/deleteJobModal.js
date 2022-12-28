@@ -1,6 +1,6 @@
 import { Box, Button, Modal } from "@mui/material";
 import React from "react";
-import { UserJobs } from "../../context/jobsContext";
+import { UserJobs } from "../../../context/jobsContext";
 
 const DeleteJobModal = (show, onClose) => {
 

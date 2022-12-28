@@ -1,7 +1,7 @@
 import { Button, FormControl, InputLabel, MenuItem, Modal, Select, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
-import { UserJobs } from '../../context/jobsContext';
+import { UserJobs } from '../../../context/jobsContext';
 
 const EditJobModal = (job, show, onClose) => {
 
@@ -22,7 +22,6 @@ const EditJobModal = (job, show, onClose) => {
 
     const changeCurrentJobPriority = (event) => {
         setPriority(event.target.value);
-        console.log(getJobs())
     }
 
     const editPriority = () => {
@@ -31,7 +30,7 @@ const EditJobModal = (job, show, onClose) => {
         jobs[selectedJobIndex].priority = priority;
         jobs[selectedJobIndex].importanceLevel = selectImportanceLevel(priority);
         setNewJobs(jobs);
-        console.log(getJobs());
+        localStorage.setItem('jobs', JSON.stringify(jobs));
         onClose();
     }
 

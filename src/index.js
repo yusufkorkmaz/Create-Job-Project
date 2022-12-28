@@ -4,12 +4,24 @@ import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import { JobsProvider } from './context/jobsContext';
 import App from './App';
+import { ModalProvider } from './context/modalContext';
+import { SnackBarProvider } from './context/snackBarContext';
+import { PrioritiesProvider } from './context/prioritiesContext';
+import { SearchProvider } from './context/searchContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <JobsProvider>
-      <App />
+      <ModalProvider>
+        <SnackBarProvider>
+          <PrioritiesProvider>
+            <SearchProvider>
+              <App />
+            </SearchProvider>
+          </PrioritiesProvider>
+        </SnackBarProvider>
+      </ModalProvider>
     </JobsProvider>
   </React.StrictMode>
 );
