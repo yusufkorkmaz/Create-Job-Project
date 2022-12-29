@@ -12,8 +12,8 @@ const CreateJobSection = () => {
     const [priority, setPriority] = useState('');
 
     const { getJobs, addJob } = UserJobs();
-    const {getPriorities} = JobPriorities();
-    const {setShowSuccessSnackbar, setShowErrorSnackbar, setErrorSnackbarMessageState} = AppSnackbar();
+    const { getPriorities } = JobPriorities();
+    const { setShowSuccessSnackbar, setShowErrorSnackbar, setErrorSnackbarMessageState } = AppSnackbar();
 
     const handleJobName = (event) => {
         setJobName(event.target.value);
@@ -42,12 +42,15 @@ const CreateJobSection = () => {
         <h2>Create New Job</h2>
         <Box className="create-job-items">
             <TextField required fullWidth id="outlined-basic" className='job-name' label="Job Name" value={jobName} onChange={handleJobName} variant="outlined" />
-            <CustomSelectInput
-                label="Priority *"
-                value={priority}
-                onChange={changePriority}
-                options={getPriorities()}
-            />
+            <Box className="select-priority-for-create-new-job-wrapper">
+                <CustomSelectInput
+                    label="Priority *"
+                    value={priority}
+                    onChange={changePriority}
+                    options={getPriorities()}
+                />
+            </Box>
+
             <Button onClick={createJob} variant="contained">Create</Button>
         </Box>
     </Box>

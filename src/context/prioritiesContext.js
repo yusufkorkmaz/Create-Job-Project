@@ -21,8 +21,6 @@ export const PrioritiesProvider = ({ children }) => {
 
     const { setShowErrorSnackbarState, setErrorSnackbarMessageState } = AppSnackbar();
 
-
-
     const getPrioritiesInApi = async () => {
         await fetch('http://localhost:3001/api/priorities')
             .then(response => response.json())

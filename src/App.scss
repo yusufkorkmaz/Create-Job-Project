@@ -30,6 +30,11 @@ $color in $priority-colors {
   margin: 20px 0;
 }
 
+.select-priority-for-create-new-job-wrapper {
+  margin: 0 20px;
+  width: 100%;
+}
+
 .select-priority-box {
   width: 100%;
   margin: 0 20px;
@@ -46,8 +51,8 @@ $color in $priority-colors {
   justify-content: space-between;
 }
 
-.divider { 
-  margin: 40px 0!important;
+.divider {
+  margin: 40px 0 !important;
 }
 
 .jobs-header {
@@ -132,7 +137,7 @@ $color in $priority-colors {
   display: flex;
   flex-direction: row;
   margin: 30px 0;
-} 
+}
 
 .job-text-in-table {
   max-width: 500px;
@@ -172,7 +177,7 @@ $color in $priority-colors {
 
   .delete-job-modal {
     justify-content: space-around;
-  } 
+  }
 
   .job-content-headers {
     display: flex;
@@ -187,6 +192,10 @@ $color in $priority-colors {
   .search-area {
     flex-direction: column-reverse;
     align-items: center;
+  }
+
+  .select-priority-for-create-new-job-wrapper {
+    margin: 20px 0;
   }
 }
 
