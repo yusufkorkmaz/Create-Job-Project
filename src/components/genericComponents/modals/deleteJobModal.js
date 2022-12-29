@@ -1,10 +1,18 @@
 import { Box, Button, Modal } from "@mui/material";
 import React from "react";
 import { UserJobs } from "../../../context/jobsContext";
+import { AppModal } from "../../../context/modalContext";
 
-const DeleteJobModal = (show, onClose) => {
+const DeleteJobModal = () => {
 
     const { getJobs, setNewJobs, getSelectedJobIndex } = UserJobs();
+    const { getShowJobDeleteModal, setShowJobDeleteModalState } = AppModal();
+
+    const show = getShowJobDeleteModal();
+
+    const onClose = () => {
+        setShowJobDeleteModalState(false);
+    }
 
     const completeDeleteJobButtonOnClickInModal = () => {
         let tempJobs = [...getJobs()];

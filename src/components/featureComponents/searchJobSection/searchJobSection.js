@@ -13,7 +13,6 @@ const SearchJobSection = () => {
     const { getSearchInputText, setSearchInputTextState, getSearchPriority, setSearchPriorityState } = SearchJobs();
 
     const setSearchPriority = (event) => {
-        console.log(event.target.value);
         setSearchPriorityState(event.target.value);
     }
 

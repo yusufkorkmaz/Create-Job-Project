@@ -4,11 +4,24 @@ import { AppSnackbar } from './snackBarContext';
 
 const PrioritiesContext = createContext();
 
+export const selectImportanceLevel = (priority) => {
+    switch (priority) {
+        case 'Urgent':
+            return 1;
+        case 'Regular':
+            return 2;
+        case 'Trivial':
+            return 3;
+    }
+}
+
 export const PrioritiesProvider = ({ children }) => {
 
     const [priorities, setPriorities] = useState(JSON.parse(localStorage.getItem('priorities')) || []);
 
     const { setShowErrorSnackbarState, setErrorSnackbarMessageState } = AppSnackbar();
+
+
 
     const getPrioritiesInApi = async () => {
         await fetch('http://localhost:3001/api/priorities')

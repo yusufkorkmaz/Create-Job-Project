@@ -1,27 +1,21 @@
-import { Button, FormControl, InputLabel, MenuItem, Modal, Select, TextField } from '@mui/material';
+import { Button, Modal, TextField } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import { UserJobs } from '../../../context/jobsContext';
+import { AppModal } from '../../../context/modalContext';
+import { JobPriorities, selectImportanceLevel } from '../../../context/prioritiesContext';
+import CustomSelectInput from '../../featureComponents/customSelectInput/customSelectInput';
 
-const EditJobModal = (job, show, onClose) => {
+const EditJobModal = () => {
 
-    const { getJobs, setNewJobs, getSelectedJobIndex } = UserJobs();
+    const { getPriorities } = JobPriorities();
+    const { getJobs, getSelectedJob, setNewJobs, getSelectedJobIndex } = UserJobs();
+    const { getShowJobEditModal, setShowJobEditModalState } = AppModal();
 
-    const [priority, setPriority] = useState('');
+    const [priority, setPriority] = useState();
 
-    const selectImportanceLevel = (priority) => {
-        switch (priority) {
-            case 'Urgent':
-                return 1;
-            case 'Regular':
-                return 2;
-            case 'Trivial':
-                return 3;
-        }
-    }
-
-    const changeCurrentJobPriority = (event) => {
-        setPriority(event.target.value);
+    const onClose = () => {
+        setShowJobEditModalState(false);
     }
 
     const editPriority = () => {
@@ -35,22 +29,26 @@ const EditJobModal = (job, show, onClose) => {
     }
 
     const returnPriority = () => {
-        setPriority(job.priority);
+        setPriority(getSelectedJob().priority);
     }
-
 
     const closeModal = () => {
         returnPriority();
         onClose();
     }
-    
+
+    const changePriority = (event) => {
+        setPriority(event.target.value);
+    }
+
     useEffect(() => {
-        if (job.priority)
-            setPriority(job.priority);
-    }, [job.priority])
+        if (getSelectedJob().priority) {
+            returnPriority();
+        }
+    }, [getSelectedJob().priority])
 
     return <Modal
-        open={show}
+        open={getShowJobEditModal()}
         onClose={onClose}
         aria-labelledby="parent-modal-title"
         aria-describedby="parent-modal-description"
@@ -60,23 +58,14 @@ const EditJobModal = (job, show, onClose) => {
                 <Box>
                     <h2 id="parent-modal-title">Edit Job</h2>
 
-                    <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={job.name} variant="outlined" />
+                    <TextField disabled fullWidth id="outlined-basic" label="Job Name" value={getSelectedJob().name} variant="outlined" />
                     <Box className='select-priority-in-modal'>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-                            <Select
-                                labelId="demo-simple-select-label"
-                                label="Priority *"
-                                id="demo-simple-select"
-                                fullWidth
-                                value={priority}
-                                onChange={changeCurrentJobPriority}
-                            >
-                                <MenuItem value={'Urgent'}>Urgent</MenuItem>
-                                <MenuItem value={'Regular'}>Regular</MenuItem>
-                                <MenuItem value={'Trivial'}>Trivial</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <CustomSelectInput
+                            label="Priority *"
+                            value={priority || ''}
+                            onChange={changePriority}
+                            options={getPriorities()}
+                        />
                     </Box>
                 </Box>
                 <Box className='edit-job-modal-buttons'>
