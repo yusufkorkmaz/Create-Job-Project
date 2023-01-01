@@ -13,7 +13,7 @@ const CreateJobSection = () => {
 
     const { getJobs, addJob } = UserJobs();
     const { getPriorities } = JobPriorities();
-    const { setShowSuccessSnackbar, setShowErrorSnackbar, setErrorSnackbarMessageState } = AppSnackbar();
+    const { setShowSuccessSnackbarState, setShowErrorSnackbarState, setErrorSnackbarMessageState } = AppSnackbar();
 
     const handleJobName = (event) => {
         setJobName(event.target.value);
@@ -24,14 +24,11 @@ const CreateJobSection = () => {
     }
 
     const createJob = () => {
-        if (priority.length === 0) {
-            setErrorSnackbarMessageState('Please select a priority');
-            setShowErrorSnackbar(true);
-        } else if (jobName.length === 0) {
-            setErrorSnackbarMessageState('Please enter a job name');
-            setShowErrorSnackbar(true);
-        } else {
-            setShowSuccessSnackbar(true);
+        if (priority.length === 0 || jobName.length === 0) {
+            setErrorSnackbarMessageState('Please fill all the fields');
+            setShowErrorSnackbarState(true);
+        }  else {
+            setShowSuccessSnackbarState(true);
             addJob({ "id": getJobs().length, "name": jobName, "priority": priority, "importanceLevel": selectImportanceLevel(priority) });
             setJobName('');
             setPriority('');
