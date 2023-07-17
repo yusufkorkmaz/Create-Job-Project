@@ -25,6 +25,7 @@ export const PrioritiesProvider = ({ children }) => {
         await fetch('http://localhost:3001/api/priorities')
             .then(response => response.json())
             .then(data => {
+                console.log(data);
                 setPriorities(data);
                 localStorage.setItem('priorities', JSON.stringify(data));
             }).catch(error => {
@@ -33,12 +34,16 @@ export const PrioritiesProvider = ({ children }) => {
                 console.log(error);
             })
     }
-
+    
     const setPrioritiesState = (priorities) => {
         setPriorities(priorities);
     }
 
     const getPriorities = () => {
+        return priorities;
+    }
+
+    const getPrioritiesListComponent = () => {
         return priorities.length > 0 ?
             priorities.map((priority, index) => {
                 return <MenuItem key={index} value={priority.name}>{priority.name}</MenuItem>
@@ -47,7 +52,7 @@ export const PrioritiesProvider = ({ children }) => {
     }
 
     return (
-        <PrioritiesContext.Provider value={{ getPriorities, getPrioritiesInApi, setPrioritiesState }}>
+        <PrioritiesContext.Provider value={{ getPriorities, getPrioritiesListComponent, getPrioritiesInApi, setPrioritiesState }}>
             {children}
         </PrioritiesContext.Provider>
     );

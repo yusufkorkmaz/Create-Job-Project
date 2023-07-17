@@ -12,7 +12,7 @@ const CreateJobSection = () => {
     const [priority, setPriority] = useState('');
 
     const { getJobs, addJob } = UserJobs();
-    const { getPriorities } = JobPriorities();
+    const { getPrioritiesListComponent } = JobPriorities();
     const { setShowSuccessSnackbarState, setShowErrorSnackbarState, setErrorSnackbarMessageState } = AppSnackbar();
 
     const handleJobName = (event) => {
@@ -44,7 +44,7 @@ const CreateJobSection = () => {
                     label="Priority *"
                     value={priority}
                     onChange={changePriority}
-                    options={getPriorities()}
+                    options={getPrioritiesListComponent()}
                 />
             </Box>
 

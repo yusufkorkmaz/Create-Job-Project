@@ -8,7 +8,7 @@ import CustomSelectInput from '../../featureComponents/customSelectInput/customS
 
 const EditJobModal = () => {
 
-    const { getPriorities } = JobPriorities();
+    const { getPrioritiesListComponent } = JobPriorities();
     const { getJobs, getSelectedJob, setNewJobs, getSelectedJobIndex } = UserJobs();
     const { getShowJobEditModal, setShowJobEditModalState } = AppModal();
 
@@ -64,7 +64,7 @@ const EditJobModal = () => {
                             label="Priority *"
                             value={priority || ''}
                             onChange={changePriority}
-                            options={getPriorities()}
+                            options={getPrioritiesListComponent()}
                         />
                     </Box>
                 </Box>

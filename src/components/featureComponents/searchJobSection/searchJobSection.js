@@ -8,7 +8,7 @@ import { UserJobs } from '../../../context/jobsContext';
 import { SearchJobs } from '../../../context/searchContext';
 
 const SearchJobSection = () => {
-    const { getPriorities } = JobPriorities();
+    const { getPrioritiesListComponent } = JobPriorities();
     const { getJobs, getWhichArrayUse } = UserJobs();
     const { getSearchInputText, setSearchInputTextState, getSearchPriority, setSearchPriorityState } = SearchJobs();
 
@@ -48,7 +48,7 @@ const SearchJobSection = () => {
                 value={getSearchPriority()}
                 onChange={setSearchPriority}
                 options={
-                    getPriorities()
+                    getPrioritiesListComponent()
                 }
             />
         </Box>

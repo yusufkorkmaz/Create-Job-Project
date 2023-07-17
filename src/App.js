@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     if (getPriorities() === null || getPriorities().length === 0 || Object.keys(getPriorities()).length === 0 || JSON.stringify(getPriorities()) === "{}") {
       getPrioritiesInApi();
-    }
+    } 
   }, [])
 
   useEffect(() => {
